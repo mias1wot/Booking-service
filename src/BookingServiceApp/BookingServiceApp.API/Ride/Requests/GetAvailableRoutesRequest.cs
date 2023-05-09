@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BookingServiceApp.API.BookingService.Requests
+namespace BookingServiceApp.API.Ride.Requests
 {
-	public class BookRouteRequest
+	public class GetAvailableRoutesRequest
 	{
 		public string From { get; set; }
 		public string To { get; set; }
-		public int Seats { get; set; }
+		public DateTime DepartureTime { get; set; }
+		public int NumberOfSeats { get; set; }
 	}
 }

@@ -1,3 +1,8 @@
+using BookingServiceApp.Application.Services;
+using BookingServiceApp.Application.Services.Interfaces;
+using BookingServiceApp.Domain.Repositories;
+using BookingServiceApp.Infrastructure.EF;
+using BookingServiceApp.Infrastructure.Repos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +31,18 @@ namespace BookingServiceApp.API
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllers();
+
+			services.AddAutoMapper(typeof(Startup));
+
+			services.AddDbContext<BookingServiceContext>();
+
+			//services.AddHttpClient<IRouteApiService, RouteApiService>(client => client.BaseAddress = new Uri(Configuration["RouteApiServiceBaseUrl"]));
+
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+			services.AddScoped<IRideService, RideService>();
+			services.AddScoped<ITicketService, TicketService>();
+			services.AddScoped<IUserService, UserService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -7,23 +7,15 @@ using System.Text;
 
 // Used Microsoft.EntityFrameworkCore version 5.0.17 for .Net Core 3.1
 
-/*
-    Add migrations:
-Add-migration Initial -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.Infrastructure
-
-For this to work you need to install Microsoft.EntityFrameworkCore.Design (5.0.17) (or Tools which includes Desing) .
-
-*/
 
 /*
-    Managing migrations:
-Add-migration MigName -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.Infrastructure
+    Add migration (For this to work you need to install Microsoft.EntityFrameworkCore.Design (5.0.17) [or Tools which includes Desing)]:
+Add-migration -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.Infrastructure MigName
 
 Update-database -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.Infrastructure
 
     Rollback to MigName migration:
-Update-Database MigName -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.Infrastructure 
-
+Update-Database -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.Infrastructure MigName
 
     Remove last migration:
 Remove-migration -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.Infrastructure
@@ -42,7 +34,8 @@ namespace BookingServiceApp.Infrastructure.EF
 		}
 
 		public virtual DbSet<User> Users { get; set; }
-		public virtual DbSet<Route> Routes { get; set; }
+		public virtual DbSet<Ride> Rides { get; set; }
+		public virtual DbSet<Seat> Seats { get; set; }
 
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

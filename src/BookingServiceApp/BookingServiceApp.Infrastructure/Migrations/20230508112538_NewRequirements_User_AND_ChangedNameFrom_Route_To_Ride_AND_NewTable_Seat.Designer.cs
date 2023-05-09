@@ -4,14 +4,16 @@ using BookingServiceApp.Infrastructure.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookingServiceApp.Infrastructure.Migrations
 {
     [DbContext(typeof(BookingServiceContext))]
-    partial class BookingServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20230508112538_NewRequirements_User_AND_ChangedNameFrom_Route_To_Ride_AND_NewTable_Seat")]
+    partial class NewRequirements_User_AND_ChangedNameFrom_Route_To_Ride_AND_NewTable_Seat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

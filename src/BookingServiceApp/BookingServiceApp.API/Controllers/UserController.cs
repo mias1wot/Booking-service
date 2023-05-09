@@ -1,5 +1,8 @@
-﻿using BookingServiceApp.API.BookingService.Requests;
+﻿using AutoMapper;
 using BookingServiceApp.API.BookingService.Responses;
+using BookingServiceApp.API.User.Requests;
+using BookingServiceApp.Application.Services.Interfaces;
+using BookingServiceApp.Domain.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,29 +16,50 @@ namespace BookingServiceApp.API.Controllers
 	[ApiController]
 	public class UserController : ControllerBase
 	{
-		[HttpGet]
-		public async Task<ActionResult<UserResponse>> GetUser()
+		private readonly IUserService _userService;
+		private readonly IMapper _mapper;
+		public UserController(IUserService userService, IMapper mapper)
 		{
-			return await Task.FromResult(NoContent());
+			_userService = userService;
+			_mapper = mapper;
+		}
+
+		[HttpGet]
+		public async Task<ActionResult<UserResponse>> GetUserByid(int id)
+		{
+			UserDto userDto = await _userService.GetUserById(id);
+
+			return Ok(_mapper.Map<UserResponse>(userDto));
 		}
 
 		[HttpPost]
 		public async Task<ActionResult<UserResponse>> CreateUser(CreateUserRequest request)
 		{
-			return await Task.FromResult(NoContent());
-			//return CreatedAtAction("GetUser", new {id = })
+			UserDto userDto = _mapper.Map<UserDto>(request);
+
+			UserDto createdUserDto = await _userService.CreateUser(userDto, request.Password);
+
+			UserResponse response = _mapper.Map<UserResponse>(createdUserDto);
+
+			return CreatedAtAction("GetUserByid", new { id = createdUserDto.Id }, response);
 		}
 
 		[HttpPut]
 		public async Task<ActionResult> UpdateUser(UpdateUserRequest request)
 		{
-			return await Task.FromResult(NoContent());
+			UserDto userDto = _mapper.Map<UserDto>(request);
+
+			await _userService.UpdateUser(userDto);
+
+			return NoContent();
 		}
 
 		[HttpDelete]
 		public async Task<ActionResult> DeleteUser(int id)
 		{
-			return await Task.FromResult(NoContent());
+			await _userService.DeleteUser(id);
+
+			return NoContent();
 		}
 	}
 }
