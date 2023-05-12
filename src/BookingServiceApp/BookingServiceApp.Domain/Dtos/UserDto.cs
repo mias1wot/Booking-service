@@ -7,8 +7,9 @@ namespace BookingServiceApp.Domain.Dtos
 {
 	public class UserDto
 	{
-		public int Id { get; set; }
-		public int Email { get; set; }
+		public int UserId { get; set; }
+		public string Password { get; set; } = string.Empty;
+		public string Email { get; set; }
 		public string FirstName { get; set; } = string.Empty;
 		public string LastName { get; set; } = string.Empty;
 		public DateTime BirthDate { get; set; }

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,7 +44,9 @@ namespace BookingServiceApp.Infrastructure.Repos
 
 		public IQueryable<T> ApplySpecification(ISpecification<T> specification)
 		{
-			return new SpecificationEvaluator().GetQuery(_table, specification);
+			// Requires Ardalis.Specification.EntityFrameworkCore
+			//return new SpecificationEvaluator().GetQuery(_table, specification);
+			return SpecificationEvaluator.Default.GetQuery(_table, specification);
 		}
 
 
@@ -79,7 +82,9 @@ namespace BookingServiceApp.Infrastructure.Repos
 		}
 
 
-
-		
+		public async Task<IEnumerable<T>> Where(Expression<Func<T, bool>> where)
+		{
+			return await _table.Where(where).ToListAsync();
+		}
 	}
 }

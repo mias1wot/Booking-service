@@ -1,6 +1,7 @@
 ﻿using Ardalis.Specification;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,7 +22,6 @@ namespace BookingServiceApp.Domain.Repositories
 		Task DeleteAsync(object id);
 		Task DeleteAsync(T entity);
 
-		//Task<TEntity> GetAsync(ISpecification<TEntity> specification);
-		//Task<IEnumerable<TEntity>> GetAsync(ISpecification<TEntity> specification);
+		Task<IEnumerable<T>> Where(Expression<Func<T, bool>> where);
 	}
 }

@@ -25,12 +25,15 @@ namespace BookingServiceApp.Infrastructure.EF
 {
 	public class BookingServiceContext: DbContext
 	{
-		public BookingServiceContext()
+		private readonly IConfiguration _configuration;
+		public BookingServiceContext(IConfiguration configuration)
 		{
+			_configuration = configuration;
 		}
 
-		public BookingServiceContext(DbContextOptions<BookingServiceContext> options) : base(options)
+		public BookingServiceContext(DbContextOptions<BookingServiceContext> options, IConfiguration configuration) : base(options)
 		{
+			_configuration = configuration;
 		}
 
 		public virtual DbSet<User> Users { get; set; }
@@ -45,11 +48,13 @@ namespace BookingServiceApp.Infrastructure.EF
 				// For this to work you need to install Microsoft.Extensions.Configuration.Json (5.0.0 version for Core 3.1) for ConfigurationBuilder
 				// and Microsoft.EntityFrameworkCore.SqlServer (5.0.17) for UseSqlServer extension method
 				// Also you need to set 'Copy to output directory' to appsetting.json (through appsetting.json properties)
-				IConfigurationRoot configuration = new ConfigurationBuilder()
-					.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-					.AddJsonFile("appsettings.json")
-					.Build();
-				optionsBuilder.UseSqlServer(configuration.GetConnectionString("BookingService"));
+				//IConfigurationRoot configuration = new ConfigurationBuilder()
+				//	.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+				//	.AddJsonFile("appsettings.json")
+				//	.Build();
+				//optionsBuilder.UseSqlServer(configuration.GetConnectionString("BookingService"));
+
+				optionsBuilder.UseSqlServer(_configuration.GetConnectionString("BookingService"));
 			}
 		}
 	}

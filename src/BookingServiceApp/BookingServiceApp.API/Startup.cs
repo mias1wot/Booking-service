@@ -1,20 +1,23 @@
+using BookingServiceApp.API.AutoMapperProfiles;
+using BookingServiceApp.API.Middlewares;
+using BookingServiceApp.API.Validators.Ride;
 using BookingServiceApp.Application.Services;
 using BookingServiceApp.Application.Services.Interfaces;
 using BookingServiceApp.Domain.Repositories;
 using BookingServiceApp.Infrastructure.EF;
 using BookingServiceApp.Infrastructure.Repos;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace BookingServiceApp.API
 {
@@ -30,19 +33,35 @@ namespace BookingServiceApp.API
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			ServicesConfiguration.Initialize(Configuration);
+
 			services.AddControllers();
 
-			services.AddAutoMapper(typeof(Startup));
+			services.AddHttpContextAccessor();
+
+			services.AddAutoMapper(typeof(ApiProfile), typeof(ApplicationProfile));
+
+			//FluentValidation.DependencyInjectionExtensions
+			services.AddValidatorsFromAssemblyContaining<BookRideRequestValidator>();
+			//services.AddFluentValidationAutoValidation(); // Available from version 9.3.0; Not recommended to use.
+			//ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop; // Not available at this version.
 
 			services.AddDbContext<BookingServiceContext>();
 
-			//services.AddHttpClient<IRouteApiService, RouteApiService>(client => client.BaseAddress = new Uri(Configuration["RouteApiServiceBaseUrl"]));
+			services.AddHttpClient<IRouteApiService, RouteApiService>(client => {
+				client.BaseAddress = new Uri(Configuration["RouteService:RouteApiServiceBaseUrl"]);
+			});
 
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			services.AddScoped<IRideService, RideService>();
 			services.AddScoped<ITicketService, TicketService>();
 			services.AddScoped<IUserService, UserService>();
+
+
+			services.AddJwtAuthentication();
+
+			services.AddSwagger();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,12 +70,17 @@ namespace BookingServiceApp.API
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
+				app.UseSwagger();
+				app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/V1/swagger.json", "BookingServiceApp"));
 			}
 
 			app.UseHttpsRedirection();
 
+			app.UseMiddleware<ExceptionHandlerMiddleware>();
+
 			app.UseRouting();
 
+			app.UseAuthentication();
 			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints =>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BookingServiceApp.Application.Exceptions;
 using BookingServiceApp.Application.Services.Interfaces;
 using BookingServiceApp.Domain.Dtos;
 using BookingServiceApp.Domain.Entities;
@@ -16,17 +17,17 @@ namespace BookingServiceApp.Application.Services
 {
 	public class RideService : IRideService
 	{
-		private readonly HttpClient _httpClient;
 		private readonly IConfiguration _configuration;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IMapper _mapper;
+		private readonly IRouteApiService _routeApiService;
 		private readonly ITicketService _ticketService;
-		public RideService(HttpClient httpClient, IConfiguration configuration, IUnitOfWork unitOfWork, IMapper mapper, ITicketService ticketService)
+		public RideService(IConfiguration configuration, IUnitOfWork unitOfWork, IMapper mapper, IRouteApiService routeApiService, ITicketService ticketService)
 		{
-			_httpClient = httpClient;
 			_configuration = configuration;
 			_unitOfWork = unitOfWork;
 			_mapper = mapper;
+			_routeApiService = routeApiService;
 			_ticketService = ticketService;
 		}
 
@@ -37,28 +38,17 @@ namespace BookingServiceApp.Application.Services
 
 			// Check user existence.
 			if (user is null)
-				throw new ArgumentException($"User with id {userId} not found.");
+			{
+				throw new UserNotFoundException(userId);
+			}
+
 
 			return _mapper.Map<List<RideDto>>(user.Rides);
 		}
 
 		public async Task<IEnumerable<RouteDto>> GetAvailableRoutesAsync(RouteSearchParamsDto routeSearchParamsDto)
 		{
-			string json = JsonConvert.SerializeObject(routeSearchParamsDto);
-			var requestContent = new StringContent(json, Encoding.UTF8, "application/json");
-
-			var response = await _httpClient.PostAsync(_configuration["GetAvailableRoutesUri"], requestContent);
-
-			if (!response.IsSuccessStatusCode)
-			{
-				throw new Exception(response.StatusCode + response.ReasonPhrase);
-			}
-
-			string content = await response.Content.ReadAsStringAsync();
-
-			var routeDtos = JsonConvert.DeserializeObject<IEnumerable<RouteDto>>(content);
-
-			return routeDtos;
+			return await _routeApiService.GetAvailableRoutesAsync(routeSearchParamsDto);
 		}
 
 		public async Task<RideDto> BookRideAsync(int userId, BookRideParamsDto bookRideParamsDto)
@@ -67,28 +57,13 @@ namespace BookingServiceApp.Application.Services
 			User user = await _unitOfWork.UserRepo.GetAsync(userId);
 
 			if (user is null)
-				throw new ArgumentException("User not found.");
+			{
+				throw new UserNotFoundException(userId);
+			}
 
 
 			// Send request to RouteService
-			string json = JsonConvert.SerializeObject(bookRideParamsDto);
-			var requestContent = new StringContent(json, Encoding.UTF8, "application/json");
-
-			var response = await _httpClient.PostAsync(_configuration["BookRideUri"], requestContent);
-
-			if (!response.IsSuccessStatusCode)
-			{
-				throw new Exception(response.StatusCode + response.ReasonPhrase);
-			}
-
-			string content = await response.Content.ReadAsStringAsync();
-
-			var rideConfirmationDto = JsonConvert.DeserializeObject<RideConfirmationDto>(content);
-
-			if (!rideConfirmationDto.IsSuccess)
-			{
-				throw new Exception(string.Join('\n', rideConfirmationDto.Errors));
-			}
+			var rideConfirmationDto = await _routeApiService.BookRideAsync(bookRideParamsDto);
 
 
 			// Generate a ticket code

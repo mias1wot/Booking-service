@@ -7,7 +7,7 @@ namespace BookingServiceApp.API.Ride.Responses
 {
 	public class BookRideResponse
 	{
-		public int Id { get; set; }
+		public int RideId { get; set; }
 		public string RouteId { get; set; }
 		public int TicketCode { get; set; }
 		public DateTime DepartureTime { get; set; } = new DateTime();
@@ -20,7 +20,7 @@ namespace BookingServiceApp.API.Ride.Responses
 
 	public class SeatResponse
 	{
-		public int Id { get; set; }
+		public int SeatId { get; set; }
 		public int Number { get; set; }
 	}
 }

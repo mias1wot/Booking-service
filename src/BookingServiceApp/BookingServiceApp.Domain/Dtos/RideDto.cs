@@ -6,7 +6,7 @@ namespace BookingServiceApp.Domain.Dtos
 {
 	public class RideDto
 	{
-        public int Id { get; set; }
+        public int RideId { get; set; }
         public string RouteId { get; set; } = string.Empty;
         public int TicketCode { get; set; }
         public DateTime DepartureTime { get; set; } = new DateTime();

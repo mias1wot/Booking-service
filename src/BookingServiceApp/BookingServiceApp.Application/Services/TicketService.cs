@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BookingServiceApp.Application.Exceptions;
 using BookingServiceApp.Application.Helpers;
 using BookingServiceApp.Application.Services.Interfaces;
 using BookingServiceApp.Domain.Dtos;
@@ -29,7 +30,9 @@ namespace BookingServiceApp.Application.Services
 			User user = await _unitOfWork.UserRepo.GetAsync(userId);
 
 			if (user is null)
-				throw new ArgumentException("User not found.");
+			{
+				throw new UserNotFoundException(userId);
+			}
 
 			// Get password hash
 			string passHash = HashHelper.GetSHA256Hash(user.Password);
@@ -55,7 +58,9 @@ namespace BookingServiceApp.Application.Services
 			User user = await _unitOfWork.UserRepo.GetSingleAsync(new GetUserWithAllRidesById(userId));
 
 			if (user is null)
-				throw new ArgumentException("User not found.");
+			{
+				throw new UserNotFoundException(userId);
+			}
 
 			// Get password hash
 			string passHash = HashHelper.GetSHA256Hash(user.Password);
