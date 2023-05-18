@@ -32,11 +32,23 @@ namespace BookingServiceApp.API.Filters
 		private void HandleException(ExceptionContext context)
 		{
 			Type type = context.Exception.GetType();
-			if(_exceptionHandlers.TryGetValue(type, out Action<ExceptionContext> action))
+
+			// Try get the same type as the exception one
+			if (_exceptionHandlers.TryGetValue(type, out Action<ExceptionContext> action))
 			{
 				action.Invoke(context);
-
 				return;
+			}
+
+
+			// Try get the parent type of the exception one
+			foreach (var exceptionHandler in _exceptionHandlers)
+			{
+				if (exceptionHandler.Key.IsAssignableFrom(type))
+				{
+					exceptionHandler.Value.Invoke(context);
+					return;
+				}
 			}
 		}
 

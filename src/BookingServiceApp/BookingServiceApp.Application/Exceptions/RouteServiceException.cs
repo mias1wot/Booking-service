@@ -11,15 +11,16 @@ namespace BookingServiceApp.Application.Exceptions
 		{
 		}
 
-		public RouteServiceException(string message) : base(message, (int)HttpStatusCode.InternalServerError)
+		public RouteServiceException(string message) : base($"Error occured while calling RouteService: {message}.", (int)HttpStatusCode.InternalServerError)
 		{
 		}
 
-		public RouteServiceException(string message, Exception innerException) : base(message, innerException, (int)HttpStatusCode.InternalServerError)
+		public RouteServiceException(string message, Exception innerException) : base($"Error occured while calling RouteService: {message}.", innerException, (int)HttpStatusCode.InternalServerError)
 		{
 		}
 
-		public RouteServiceException(string message, HttpStatusCode httpStatusCode) : base(message, (int)httpStatusCode)
+		public RouteServiceException(string message, HttpStatusCode httpStatusCode) : 
+			base($"Error occured while calling RouteService: {message}.", (int)httpStatusCode)
 		{
 		}
 	}

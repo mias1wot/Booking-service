@@ -4,14 +4,16 @@ using BookingServiceApp.Infrastructure.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookingServiceApp.Infrastructure.Migrations
 {
     [DbContext(typeof(BookingServiceContext))]
-    partial class BookingServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20230518125431_ChangeColType_Ride_RouteId_string_to_int")]
+    partial class ChangeColType_Ride_RouteId_string_to_int
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

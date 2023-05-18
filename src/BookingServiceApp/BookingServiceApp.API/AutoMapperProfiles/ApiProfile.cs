@@ -36,9 +36,11 @@ namespace BookingServiceApp.API.AutoMapperProfiles
 
 			// Dto => Response
 			CreateMap<UserDto, UserResponse>();
-			CreateMap<RouteDto, AvailableRoute>();
-			CreateMap<RideDto, BookRideResponse>().AfterMap((rideDto, response, context) => response.Seats = context.Mapper.Map<List<SeatResponse>>(rideDto.Seats));
-			CreateMap<RideDto, RideResponse>().AfterMap((rideDto, response, context) => response.Seats = context.Mapper.Map<List<SeatResponse>>(rideDto.Seats));
+			CreateMap<RouteDto, AvailableRouteResponse>();
+			CreateMap<RideDto, BookRideResponse>();
+			CreateMap<RideDto, RideResponse>();
+
+			CreateMap<SeatDto, SeatResponse>();
 		}
 	}
 }

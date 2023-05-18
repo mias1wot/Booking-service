@@ -13,8 +13,8 @@ namespace BookingServiceApp.API.Validators.Ride
 		{
 			RuleFor(req => req.From).NotNull().NotEmpty();
 			RuleFor(req => req.To).NotNull().NotEmpty();
-			RuleFor(req => req.DepartureTime).NotNull().NotEmpty().Must(date => date > DateTime.Now).WithMessage("Departure date is incorrect.");
-			RuleFor(req => req.NumberOfSeats).GreaterThan(0);
+			RuleFor(req => req.Seats).NotNull().NotEmpty();
+			RuleForEach(req => req.Seats).GreaterThan(0);
 		}
 	}
 }

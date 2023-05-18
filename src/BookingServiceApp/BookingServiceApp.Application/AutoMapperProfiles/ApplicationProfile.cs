@@ -24,16 +24,15 @@ namespace BookingServiceApp.API.AutoMapperProfiles
 			*/
 
 			// Model => Dto & Dto => Model
-			CreateMap<User, UserDto>().AfterMap((user, userDto, context) => userDto.Rides = context.Mapper.Map<List<RideDto>>(user.Rides))
+			CreateMap<User, UserDto>()
 				.ReverseMap().ForPath(user => user.Rides, opt => opt.Ignore());
-			CreateMap<Ride, RideDto>().AfterMap((ride, rideDto, context) => rideDto.Seats = context.Mapper.Map<List<SeatDto>>(ride.Seats));
-			CreateMap<Ride, RideConfirmationDto>().AfterMap((ride, rideDto, context) => rideDto.Seats = context.Mapper.Map<List<SeatDto>>(ride.Seats)); ;
-			CreateMap<Seat, SeatDto>();
+			CreateMap<Ride, RideDto>();
+			CreateMap<Ride, RideConfirmationDto>();
+			CreateMap<Seat, SeatDto>().ReverseMap();
 
 
 			// Dto => Dto
-			CreateMap<RideConfirmationDto, Ride>().
-				AfterMap((rideConfirmationDto, ride, context) => ride.Seats = context.Mapper.Map<List<Seat>>(rideConfirmationDto.Seats));
+			CreateMap<RideConfirmationDto, Ride>();
 		}
 	}
 }

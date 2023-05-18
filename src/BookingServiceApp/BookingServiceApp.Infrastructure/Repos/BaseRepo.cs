@@ -44,8 +44,6 @@ namespace BookingServiceApp.Infrastructure.Repos
 
 		public IQueryable<T> ApplySpecification(ISpecification<T> specification)
 		{
-			// Requires Ardalis.Specification.EntityFrameworkCore
-			//return new SpecificationEvaluator().GetQuery(_table, specification);
 			return SpecificationEvaluator.Default.GetQuery(_table, specification);
 		}
 
@@ -58,7 +56,11 @@ namespace BookingServiceApp.Infrastructure.Repos
 
 		public async Task UpdateAsync(T entity)
 		{
-			_table.Attach(entity);
+			if (_context.Entry(entity).State == EntityState.Detached)
+			{
+				_table.Attach(entity);
+			}
+
 			_context.Entry(entity).State = EntityState.Modified;
 		}
 

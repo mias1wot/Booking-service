@@ -40,7 +40,7 @@ namespace BookingServiceApp.API.Controllers
 
 
 		[HttpGet]
-		public async Task<ActionResult<GetUserRidesResponse>> GetUserRidesAsync()
+		public async Task<ActionResult<IEnumerable<RideResponse>>> GetUserRidesAsync()
 		{
 			int? userId = _userService.CurrentUserId;
 			if (userId == null)
@@ -51,14 +51,12 @@ namespace BookingServiceApp.API.Controllers
 
 			IEnumerable<RideDto> rideDtos = await _rideService.GetUserRidesAsync((int)userId);
 
-			return Ok(new GetUserRidesResponse {
-				Rides = _mapper.Map<List<RideResponse>>(rideDtos)
-			});
+			return Ok(_mapper.Map<List<RideResponse>>(rideDtos));
 		}
 
-		[HttpGet]
+		[HttpPost]
 		[AllowAnonymous]
-		public async Task<ActionResult<GetAvailableRoutesResponse>> GetAvailableRoutes(GetAvailableRoutesRequest request)
+		public async Task<ActionResult<IList<AvailableRouteResponse>>> GetAvailableRoutes(GetAvailableRoutesRequest request)
 		{
 			var validationRes = await _getAvailableRoutesRequestValidator.ValidateAsync(request);
 			if (!validationRes.IsValid)
@@ -71,10 +69,7 @@ namespace BookingServiceApp.API.Controllers
 
 			IEnumerable<RouteDto> routeDtos = await _rideService.GetAvailableRoutesAsync(routeSearchParamsDto);
 
-			return Ok(new GetAvailableRoutesResponse
-			{
-				Routes = _mapper.Map<List<AvailableRoute>>(routeDtos)
-			});
+			return Ok(_mapper.Map<List<AvailableRouteResponse>>(routeDtos));
 		}
 
 		[HttpPost]

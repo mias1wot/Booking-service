@@ -11,7 +11,7 @@ namespace BookingServiceApp.Domain.Entities
 		[Key]
 		public int RideId { get; set; }
 		[Required]
-		public string RouteId { get; set; }
+		public int RouteId { get; set; }
 		[Required]
 		public string TicketCode { get; set; }
 		public DateTime DepartureTime { get; set; }

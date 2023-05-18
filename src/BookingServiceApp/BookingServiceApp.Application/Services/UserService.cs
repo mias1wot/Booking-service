@@ -67,8 +67,7 @@ namespace BookingServiceApp.Application.Services
 			string hashedPassword = HashHelper.GetSHA256Hash(password);
 
 			//Ardalis spec does not work!!
-			//User user = await _unitOfWork.UserRepo.GetSingleAsync(new GetUserByEmailAndPassword(email, hashedPassword));
-			User user = (await _unitOfWork.UserRepo.Where(user => user.Email == email && user.Password == hashedPassword)).FirstOrDefault();
+			User user = await _unitOfWork.UserRepo.GetSingleAsync(new GetUserByEmailAndPassword(email, hashedPassword));
 
 			return _mapper.Map<UserDto>(user);
 		}

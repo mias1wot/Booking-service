@@ -1,7 +1,10 @@
+using BookingServiceApp.Infrastructure.EF;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using RouteServiceAPP.Infrastructure.DataInitialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +16,28 @@ namespace BookingServiceApp.API
 	{
 		public static void Main(string[] args)
 		{
-			CreateHostBuilder(args).Build().Run();
+			bool reinitializeDbData = false;
+			bool reinitializeRidesOnly = true;
+
+
+			var webHost = CreateHostBuilder(args).Build();
+
+
+			if (reinitializeDbData)
+			{
+				//Drop create DB and initialize it with data
+				using (var scope = webHost.Services.CreateScope())
+				{
+					var services = scope.ServiceProvider;
+					var context = services.GetRequiredService<BookingServiceContext>();
+					//BookingServiceDbInitializer.RecreateDatabase(context);
+					BookingServiceDbInitializer.ClearData(context, reinitializeRidesOnly);
+					BookingServiceDbInitializer.InitializeData(context);
+				}
+			}
+
+
+			webHost.Run();
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>

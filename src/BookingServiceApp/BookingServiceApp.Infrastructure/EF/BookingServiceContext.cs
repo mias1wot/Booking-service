@@ -5,21 +5,29 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-// Used Microsoft.EntityFrameworkCore version 5.0.17 for .Net Core 3.1
 
 
 /*
-    Add migration (For this to work you need to install Microsoft.EntityFrameworkCore.Design (5.0.17) [or Tools which includes Desing)]:
-Add-migration -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.Infrastructure MigName
+	For migrations to work you need to install:
+	API:
+		Microsoft.EntityFrameworkCore.Tools (5.0.17 for .Net Core 3.1)
+	Infrastructure:
+		Microsoft.EntityFrameworkCore.Tools (5.0.17)
+		Microsoft.EntityFrameworkCore version (5.0.17)
 
-Update-database -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.Infrastructure
+
+    Add migration:
+Add-migration -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.API MigName
+
+Update-database -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.API
 
     Rollback to MigName migration:
-Update-Database -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.Infrastructure MigName
+Update-Database -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.API MigName
 
     Remove last migration:
-Remove-migration -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.Infrastructure
+Remove-migration -Project BookingServiceApp.Infrastructure -StartupProject BookingServiceApp.API
 */
+
 
 namespace BookingServiceApp.Infrastructure.EF
 {

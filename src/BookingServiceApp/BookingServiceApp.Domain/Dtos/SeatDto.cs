@@ -6,7 +6,6 @@ namespace BookingServiceApp.Domain.Dtos
 {
 	public class SeatDto
 	{
-		public int SeatId { get; set; }
 		public int Number { get; set; }
 	}
 }

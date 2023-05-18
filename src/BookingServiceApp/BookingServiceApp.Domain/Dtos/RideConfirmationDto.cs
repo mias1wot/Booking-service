@@ -8,7 +8,7 @@ namespace BookingServiceApp.Domain.Dtos
 	{
 		public bool IsSuccess { get; set; }
 		public IEnumerable<string> Errors { get; set; }
-		public string RouteId { get; set; }
+		public int RouteId { get; set; }
 		public DateTime DepartureTime { get; set; }
 		public DateTime ArrivalTime { get; set; }
 		public string From { get; set; } = string.Empty;

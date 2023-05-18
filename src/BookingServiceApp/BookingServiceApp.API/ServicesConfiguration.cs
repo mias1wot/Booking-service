@@ -23,7 +23,7 @@ namespace BookingServiceApp.API
 
 		public static void AddJwtAuthentication(this IServiceCollection services)
 		{
-			//Microsoft.AspNetCore.Authentication.JwtBearer v 3.1.32
+			// Microsoft.AspNetCore.Authentication.JwtBearer v 3.1.32
 			services.AddAuthentication(opt =>
 			{
 				opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -45,6 +45,7 @@ namespace BookingServiceApp.API
 
 		public static void AddSwagger(this IServiceCollection services)
 		{
+			// You need to install Swashbuckle.AspNetCore
 			services.AddSwaggerGen(options =>
 			{
 				options.SwaggerDoc("V1", new OpenApiInfo
