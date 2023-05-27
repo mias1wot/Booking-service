@@ -1,0 +1,43 @@
+**Build image and container**
+
+Build docker image:
+docker  build -t myimage .
+
+Run the docker container:
+docker-compose up -d
+
+
+Rebuild image:
+docker-compose up build 
+or
+docker-compose up --build     
+
+
+**See file sysem of image and container**
+
+You can see files of a container's file system:
+docker exec -t -i mycontainer /bin/bash
+
+  
+List folder content inside image:
+docker run --rm --entrypoint=ls imageName -la /
+
+Show file content inside image:
+docker run --rm --entrypoint=cat imageName Aa.txt
+
+
+**Useful**
+
+Create network:
+docker network create mynetwork
+
+
+Port mapping:
+"5010:5005"
+5010 - port which you use in the browser.
+5005 - internal port listened to by the app.
+
+
+To make several containers communicate:
+- Create a network
+- Attach containers to this network in docker-compose file (specify network name and 'external: true')
