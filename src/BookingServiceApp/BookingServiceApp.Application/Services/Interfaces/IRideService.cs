@@ -10,6 +10,6 @@ namespace BookingServiceApp.Application.Services.Interfaces
 	{
 		Task<IEnumerable<RideDto>> GetUserRidesAsync(int userId);
 		Task<IEnumerable<RouteDto>> GetAvailableRoutesAsync(RouteSearchParamsDto routeSearchParamsDto);
-		Task<RideDto> BookRideAsync(int userId, BookRideParamsDto bookRideParamsDto);
+		Task<TicketDto> BookRideAsync(int userId, BookRideParamsDto bookRideParamsDto);
 	}
 }

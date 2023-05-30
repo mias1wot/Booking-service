@@ -32,15 +32,18 @@ namespace BookingServiceApp.API.AutoMapperProfiles
 			CreateMap<UpdateUserRequest, UserDto>();
 			CreateMap<GetAvailableRoutesRequest, RouteSearchParamsDto>();
 			CreateMap<BookRideRequest, BookRideParamsDto>();
+			CreateMap<ValidateTicketRequest, TicketDto>();
 
 
 			// Dto => Response
 			CreateMap<UserDto, UserResponse>();
 			CreateMap<RouteDto, AvailableRouteResponse>();
-			CreateMap<RideDto, BookRideResponse>();
+			//CreateMap<RideDto, BookRideResponse>();
 			CreateMap<RideDto, RideResponse>();
 
 			CreateMap<SeatDto, SeatResponse>();
+
+			CreateMap<TicketDto, BookRideResponse>();
 		}
 	}
 }

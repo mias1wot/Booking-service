@@ -19,5 +19,13 @@ namespace BookingServiceApp.Application.Helpers
                 return Convert.ToBase64String(hash);
             }
         }
+
+        public static byte[] GetSHA256Hash(byte[] input)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                return sha256.ComputeHash(input);
+            }
+        }
     }
 }

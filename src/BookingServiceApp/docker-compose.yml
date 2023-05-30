@@ -30,6 +30,7 @@ services:
       RouteService:RouteApiServiceBaseUrl: "http://route-service:5005/api/"
     volumes:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https/
+      - "./dockerData/TicketKeys/:/var/TicketKeys/"
     networks:
       - booking-app-net
     depends_on:
