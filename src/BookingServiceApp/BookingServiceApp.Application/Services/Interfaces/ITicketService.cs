@@ -8,8 +8,8 @@ namespace BookingServiceApp.Application.Services.Interfaces
 {
 	public interface ITicketService
 	{
-		Task<string> GenerateTicket(int userId, RideConfirmationDto rideDto);
+		Task<TicketDto> GenerateTicket(int userId, RideConfirmationDto rideDto);
 
-		Task<bool> IsValid(int userId, string ticket);
+		Task<bool> IsValid(TicketDto ticketDto);
 	}
 }

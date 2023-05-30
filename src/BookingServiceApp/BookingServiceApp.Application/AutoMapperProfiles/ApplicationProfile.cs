@@ -30,9 +30,12 @@ namespace BookingServiceApp.API.AutoMapperProfiles
 			CreateMap<Ride, RideConfirmationDto>();
 			CreateMap<Seat, SeatDto>().ReverseMap();
 
+			CreateMap<User, TicketDto>();
+
 
 			// Dto => Dto
 			CreateMap<RideConfirmationDto, Ride>();
+			CreateMap<RideConfirmationDto, TicketDto>().ForMember(ticket => ticket.Seats, opt => opt.MapFrom(rideConf => rideConf.Seats.Select(seat => seat.Number)));
 		}
 	}
 }

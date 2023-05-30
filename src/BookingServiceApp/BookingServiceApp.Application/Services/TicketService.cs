@@ -6,9 +6,12 @@ using BookingServiceApp.Domain.Dtos;
 using BookingServiceApp.Domain.Entities;
 using BookingServiceApp.Domain.Repositories;
 using BookingServiceApp.Domain.Specifications;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,66 +21,81 @@ namespace BookingServiceApp.Application.Services
 	{
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IMapper _mapper;
-		public TicketService(IUnitOfWork unitOfWork, IMapper mapper)
+		private readonly IConfiguration _config;
+		public TicketService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration config)
 		{
 			_unitOfWork = unitOfWork;
 			_mapper = mapper;
+			_config = config;
 		}
 
 
-		public async Task<string> GenerateTicket(int userId, RideConfirmationDto rideConfirmationDto)
+		public async Task<TicketDto> GenerateTicket(int userId, RideConfirmationDto rideConfirmationDto)
 		{
 			User user = await _unitOfWork.UserRepo.GetAsync(userId);
-
 			if (user is null)
 			{
 				throw new UserNotFoundException(userId);
 			}
 
-			// Get password hash
-			string passHash = HashHelper.GetSHA256Hash(user.Password);
+			// Assemble ticket
+			TicketDto ticketDto = _mapper.Map<TicketDto>(rideConfirmationDto);
+
+			_mapper.Map(user, ticketDto);
 
 
-			// Alter rideConfirmationDto to make Validation possible.
-			var savedErrors = rideConfirmationDto.Errors;
-			rideConfirmationDto.Errors = null;
-
-			// Get hash of altered RideConfirmationDto.
-			string rideDtoHash = HashHelper.GetSHA256Hash(JsonConvert.SerializeObject(rideConfirmationDto));
-
-			// Revert back the rideConfirmationDto changes.
-			rideConfirmationDto.Errors = savedErrors;
+			// Get ticket hash based on each property
+			byte[] ticketHash = GetTicketHash(ticketDto);
 
 
-			return passHash + rideDtoHash;
+			// Sign the ticket hash using DSA algorithm
+			// Import private key
+			DSACryptoServiceProvider dsaInstance = DSAImplementation.ImportKey(_config["TicketEncryptionPrivateKeyPath"]);
+
+			// Create signature
+			byte[] signature = DSAImplementation.CreateSignature(ticketHash, dsaInstance);
+
+			ticketDto.TicketCode = Convert.ToBase64String(signature);
+
+			return ticketDto;
 		}
 
-		public async Task<bool> IsValid(int userId, string ticket)
+		public async Task<bool> IsValid(TicketDto ticketDto)
 		{
-			// Check user existence
-			User user = await _unitOfWork.UserRepo.GetSingleAsync(new GetUserWithAllRidesById(userId));
+			// Get ticket hash based on each property
+			byte[] actualTicketHash = GetTicketHash(ticketDto);
 
-			if (user is null)
-			{
-				throw new UserNotFoundException(userId);
-			}
+			byte[] signature = Convert.FromBase64String(ticketDto.TicketCode);
 
-			// Get password hash
-			string passHash = HashHelper.GetSHA256Hash(user.Password);
 
-			// Traverse all user rides. If hash of password and generated rideConfirmationDto from ride equal to ticket, the ticket is valied. Otherwise not.
-			RideConfirmationDto rideConfirmationDto;
-			string rideDtoHash;
-			foreach (Ride ride in user.Rides)
-			{
-				rideConfirmationDto = _mapper.Map<RideConfirmationDto>(ride);
-				rideConfirmationDto.IsSuccess = true;
-				rideDtoHash = HashHelper.GetSHA256Hash(JsonConvert.SerializeObject(rideConfirmationDto));
-				if (passHash + rideDtoHash == ticket)
-					return true;
-			}
+			// Verify signature (that the ticket info [hash] hasn't changed) using DSA algorithm
+			// Import public key
+			DSACryptoServiceProvider dsaInstance = DSAImplementation.ImportKey(_config["TicketEncryptionPublicKeyPath"]);
 
-			return false;
+			// Verify signature
+			bool isValid = DSAImplementation.VerifySignature(actualTicketHash, signature, dsaInstance);
+
+			return isValid;
+		}
+
+		byte[] GetTicketHash(TicketDto ticketDto)
+		{
+			// Transform properties to byte[] and assemble in one byte[]
+			var concatenatedBytes = Encoding.Unicode.GetBytes(ticketDto.FirstName)
+				.Concat(Encoding.Unicode.GetBytes(ticketDto.LastName))
+				.Concat(BitConverter.GetBytes(ticketDto.BirthDate.Ticks))
+				.Concat(BitConverter.GetBytes(ticketDto.DepartureTime.Ticks))
+				.Concat(BitConverter.GetBytes(ticketDto.ArrivalTime.Ticks))
+				.Concat(Encoding.Unicode.GetBytes(ticketDto.From))
+				.Concat(Encoding.Unicode.GetBytes(ticketDto.To))
+				.Concat(ticketDto.Seats.SelectMany(BitConverter.GetBytes))
+				.ToArray();
+
+
+			// Get ticket hash
+			byte[] ticketHash = HashHelper.GetSHA256Hash(concatenatedBytes);
+
+			return ticketHash;
 		}
 	}
 }

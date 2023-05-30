@@ -81,7 +81,6 @@ namespace BookingServiceApp.API.Controllers
 				return Unauthorized();
 			}
 
-
 			var validationRes = await _bookRideRequestValidator.ValidateAsync(request);
 			if (!validationRes.IsValid)
 			{
@@ -91,16 +90,16 @@ namespace BookingServiceApp.API.Controllers
 
 			BookRideParamsDto bookRideParamsDto = _mapper.Map<BookRideParamsDto>(request);
 
-			RideDto rideDto = await _rideService.BookRideAsync((int)userId, bookRideParamsDto);
+			TicketDto ticket = await _rideService.BookRideAsync(userId.Value, bookRideParamsDto);
 
-			return Ok(_mapper.Map<BookRideResponse>(rideDto));
+			return Ok(_mapper.Map<BookRideResponse>(ticket));
 		}
 
-		[HttpGet]
+		[HttpPost]
 		[AllowAnonymous]
-		public async Task<ActionResult<bool>> ValidateTicketCode(string ticketCode, int userId)
+		public async Task<ActionResult<bool>> ValidateTicketCode(ValidateTicketRequest request)
 		{
-			return Ok(await _ticketService.IsValid(userId, ticketCode));
+			return Ok(await _ticketService.IsValid(_mapper.Map<TicketDto>(request)));
 		}
 	}
 }

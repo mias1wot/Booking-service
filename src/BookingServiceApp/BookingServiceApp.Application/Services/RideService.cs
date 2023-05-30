@@ -51,7 +51,7 @@ namespace BookingServiceApp.Application.Services
 			return await _routeApiService.GetAvailableRoutesAsync(routeSearchParamsDto);
 		}
 
-		public async Task<RideDto> BookRideAsync(int userId, BookRideParamsDto bookRideParamsDto)
+		public async Task<TicketDto> BookRideAsync(int userId, BookRideParamsDto bookRideParamsDto)
 		{
 			// Check user existence
 			User user = await _unitOfWork.UserRepo.GetAsync(userId);
@@ -67,27 +67,20 @@ namespace BookingServiceApp.Application.Services
 
 
 			// Generate a ticket code
-			string ticket = await _ticketService.GenerateTicket(userId, rideConfirmationDto);
+			TicketDto ticket = await _ticketService.GenerateTicket(userId, rideConfirmationDto);
 
 
 			// Persist to database
 			Ride ride = _mapper.Map<Ride>(rideConfirmationDto);
-			ride.TicketCode = ticket;
+			ride.TicketCode = ticket.TicketCode;
 
-			// They yield the same result? todo!! error-prone!! You need to check whether this single query creates both rides and seats.
-			// 1
-			ride.User = user;
-			await _unitOfWork.RideRepo.CreateAsync(ride);
-			// 2
-			//user.Rides.Add(ride);
-
-
+			user.Rides.Add(ride);
 			await _unitOfWork.SaveAsync();
 
-			
-			RideDto rideDto = _mapper.Map<RideDto>(ride);
 
-			return rideDto;
+			ticket.RideId = ride.RideId;
+
+			return ticket;
 		}
 	}
 }

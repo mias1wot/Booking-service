@@ -1,17 +1,12 @@
-﻿using System;
+﻿using BookingServiceApp.Domain.Dtos;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace BookingServiceApp.API.Ride.Responses
+namespace BookingServiceApp.API.Ride.Requests
 {
-	public class BookRideResponse
+	public class ValidateTicketRequest
 	{
-		public int RideId { get; set; }
-		public int RouteId { get; set; }
-		public string ExtraInfo { get; set; } = string.Empty;
-
-
 		// User-specific info
 		public string FirstName { get; set; } = string.Empty;
 		public string LastName { get; set; } = string.Empty;
