@@ -11,6 +11,7 @@ using RouteServiceAPP.Infrastructure.DataInitialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace BookingServiceApp.API
@@ -65,6 +66,7 @@ namespace BookingServiceApp.API
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
 					webBuilder.UseStartup<Startup>();
+					webBuilder.UseUrls("http://*:5000", "https://*:5001");
 				});
 	}
 }

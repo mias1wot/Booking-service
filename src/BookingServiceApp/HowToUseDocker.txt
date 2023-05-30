@@ -28,6 +28,7 @@ docker run --rm --entrypoint=cat imageName Aa.txt
 
 **Useful**
 
+
 Create network:
 docker network create mynetwork
 
@@ -36,6 +37,7 @@ Port mapping:
 "5010:5005"
 5010 - port which you use in the browser.
 5005 - internal port listened to by the app.
+Important: the app must listen to this port (webBuilder.UseUrls("http://*:5005");).
 
 
 To make several containers communicate:
