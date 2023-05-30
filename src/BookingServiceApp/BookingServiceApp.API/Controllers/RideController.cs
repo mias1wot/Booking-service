@@ -97,16 +97,10 @@ namespace BookingServiceApp.API.Controllers
 		}
 
 		[HttpGet]
-		public async Task<ActionResult<bool>> ValidateTicketCode(string ticketCode)
+		[AllowAnonymous]
+		public async Task<ActionResult<bool>> ValidateTicketCode(string ticketCode, int userId)
 		{
-			int? userId = _userService.CurrentUserId;
-			if (userId == null)
-			{
-				return Unauthorized();
-			}
-
-
-			return Ok(await _ticketService.IsValid((int)userId, ticketCode));
+			return Ok(await _ticketService.IsValid(userId, ticketCode));
 		}
 	}
 }

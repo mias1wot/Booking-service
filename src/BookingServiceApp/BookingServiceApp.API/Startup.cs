@@ -49,14 +49,7 @@ namespace BookingServiceApp.API
 			services.AddDbContext<BookingServiceContext>();
 
 			services.AddHttpClient<IRouteApiService, RouteApiService>(client => {
-				if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
-				{
-					client.BaseAddress = new Uri(Environment.GetEnvironmentVariable("APPSETTINGS_ROUTE_SERVICE_BASE_URL"));
-				}
-				else
-				{
-					client.BaseAddress = new Uri(Configuration["RouteService:RouteApiServiceBaseUrl"]);
-				}
+				client.BaseAddress = new Uri(Configuration["RouteService:RouteApiServiceBaseUrl"]);
 			});
 
 			services.AddScoped<IUnitOfWork, UnitOfWork>();

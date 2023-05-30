@@ -1,0 +1,19 @@
+https://github.com/dotnet/AspNetCore.Docs/issues/6199
+
+Generate and export a certificate:
+dotnet dev-certs https --export-path %APPDATA%\ASP.NET\Https\<Name>.pfx --password <Pass>
+
+In Dockerfile:
+Expose 443
+
+In docker-compose:
+ports:
+      - "5000:5000"
+      - "5001:5001"
+environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "http://+:5000; https://+5001"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "<Pass>"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/root/.aspnet/https/<Name>.pfx"
+volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https/

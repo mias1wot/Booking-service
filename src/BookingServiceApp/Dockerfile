@@ -5,5 +5,5 @@ RUN dotnet restore && dotnet publish -c Release -o publish
 FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS prod
 WORKDIR /app
 COPY --from=build /src/publish .
-EXPOSE 5000
+EXPOSE 443
 ENTRYPOINT ["dotnet", "BookingServiceApp.API.dll"]

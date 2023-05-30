@@ -21,10 +21,15 @@ services:
     build: .
     ports:
       - "5000:5000"
+      - "5001:5001"
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
-      ASPNETCORE_URLS: "http://+:5000"
-      APPSETTINGS_ROUTE_SERVICE_BASE_URL: "http://route-service:5005/api/"
+      ASPNETCORE_URLS: "http://+:5000; https://+5001"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "hardPass1!"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/root/.aspnet/https/Booking-service.pfx"
+      RouteService:RouteApiServiceBaseUrl: "http://route-service:5005/api/"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https/
     networks:
       - booking-app-net
     depends_on:
