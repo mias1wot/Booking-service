@@ -1,0 +1,4 @@
+1. ConfigureServices: AddAuthentication()
+2. Configure: UseAuthentication()
+3. [Authorize] on controllers
+4. Create an endpoint for login (controller + action)
