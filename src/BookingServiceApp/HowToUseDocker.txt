@@ -43,3 +43,7 @@ Important: the app must listen to this port (webBuilder.UseUrls("http://*:5005")
 To make several containers communicate:
 - Create a network
 - Attach containers to this network in docker-compose file (specify network name and 'external: true')
+
+
+If you changed the appsetting.json, you can enable new values with that command which needs to be placed before EXPOSE:
+COPY appsettings.Production.json /app/appsettings.Production.json
